@@ -2,309 +2,39 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UNCG Library Search</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        html, body { width: 100%; height: 100%; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; flex-direction: column; }
-        .container { flex: 1; display: flex; flex-direction: column; max-width: 1000px; margin: 0 auto; width: 100%; background: white; border-radius: 0; overflow: hidden; }
-        @media (min-width: 768px) { .container { border-radius: 12px; margin: 20px auto; box-shadow: 0 20px 60px rgba(0,0,0,0.3); height: auto; max-height: 90vh; } }
-        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; text-align: center; flex-shrink: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; }
+        .container { flex: 1; display: flex; flex-direction: column; max-width: 1000px; margin: 0 auto; width: 100%; background: white; }
+        @media (min-width: 768px) { .container { border-radius: 12px; margin: 20px auto; box-shadow: 0 20px 60px rgba(0,0,0,0.3); max-height: 90vh; } }
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; text-align: center; }
         .header h1 { font-size: 24px; margin-bottom: 4px; }
         .header p { opacity: 0.9; font-size: 13px; }
-        @media (min-width: 768px) { .header { padding: 30px; } .header h1 { font-size: 28px; } }
         .content { padding: 20px; overflow-y: auto; flex: 1; }
         @media (min-width: 768px) { .content { padding: 30px; } }
-        .info-box { background: #f0f4ff; border-left: 4px solid #667eea; padding: 12px; border-radius: 6px; margin-bottom: 16px; font-size: 12px; color: #555; line-height: 1.5; }
-        @media (min-width: 768px) { .info-box { padding: 16px; font-size: 13px; margin-bottom: 20px; } }
+        .info-box { background: #f0f4ff; border-left: 4px solid #667eea; padding: 12px; border-radius: 6px; margin-bottom: 16px; font-size: 12px; color: #555; }
         .tabs { display: flex; gap: 8px; margin-bottom: 16px; border-bottom: 2px solid #e0e0e0; }
-        .tab-btn { padding: 10px 16px; border: none; background: none; color: #999; cursor: pointer; font-weight: 600; font-size: 13px; border-bottom: 3px solid transparent; transition: all 0.3s; }
+        .tab-btn { padding: 10px 16px; border: none; background: none; color: #999; cursor: pointer; font-weight: 600; font-size: 13px; border-bottom: 3px solid transparent; }
         .tab-btn.active { color: #667eea; border-bottom-color: #667eea; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
         .search-fields { display: grid; gap: 12px; margin-bottom: 16px; }
-        @media (min-width: 768px) { .search-fields { grid-template-columns: 1fr 1fr auto; align-items: flex-end; gap: 12px; } }
+        @media (min-width: 768px) { .search-fields { grid-template-columns: 1fr 1fr auto; align-items: flex-end; } }
         .field-group { display: flex; flex-direction: column; gap: 6px; }
         .field-group label { font-size: 12px; font-weight: 600; color: #333; }
-        .field-group input[type="text"], .field-group input[type="number"] { padding: 10px 12px; border: 2px solid #e0e0e0; border-radius: 6px; font-size: 13px; font-family: inherit; }
-        .field-group input:focus { outline: none; border-color: #667eea; }
-        button { padding: 10px 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; white-space: nowrap; }
+        .field-group input, .field-group select { padding: 10px 12px; border: 2px solid #e0e0e0; border-radius: 6px; font-size: 13px; font-family: inherit; }
+        .field-group input:focus, .field-group select:focus { outline: none; border-color: #667eea; }
+        button { padding: 10px 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; }
         button:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4); }
-        button:active { transform: translateY(0); }
         .filters-section { background: #f8f9fa; border: 1px solid #e0e0e0; border-radius: 8px; padding: 16px; margin-bottom: 16px; }
         .filters-section h3 { font-size: 13px; font-weight: 600; color: #333; margin-bottom: 10px; margin-top: 0; }
-        .filters-section h3:not(:first-child) { margin-top: 16px; }
-        .toggle-btn { background: #667eea; color: white; border: none; padding: 8px 12px; border-radius: 4px; font-size: 12px; cursor: pointer; margin-bottom: 12px; display: inline-block; }
-        .toggle-btn:hover { background: #764ba2; }
-        .toggle-content { display: none; max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
-        .toggle-content.open { display: block; max-height: 500px; }
+        .toggle-btn { background: #667eea; padding: 8px 12px; border-radius: 4px; font-size: 12px; margin-bottom: 12px; }
+        .toggle-content { display: none; }
+        .toggle-content.open { display: block; }
         .journal-checkboxes { display: grid; grid-template-columns: 1fr; gap: 8px; }
         @media (min-width: 600px) { .journal-checkboxes { grid-template-columns: 1fr 1fr; } }
-        .journal-checkboxes label { display: flex; align-items: flex-start; font-size: 12px; color: #555; cursor: pointer; padding: 6px; border-radius: 4px; transition: background 0.2s; }
-        .journal-checkboxes label:hover { background: #e8eef7; }
-        .journal-checkboxes input[type="checkbox"] { margin-right: 8px; margin-top: 2px; cursor: pointer; width: 14px; height: 14px; flex-shrink: 0; }
-        .date-filters { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .date-input-group { display: flex; flex-direction: column; gap: 6px; }
-        .date-input-group label { font-size: 12px; font-weight: 500; color: #555; }
-        .date-input-group input[type="number"] { padding: 10px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 12px; }
-        .status { padding: 10px 12px; border-radius: 6px; margin-bottom: 12px; font-size: 12px; display: none; }
-        .status.success { display: block; background: #e8f5e9; color: #388e3c; border-left: 4px solid #388e3c; }
-        .status.error { display: block; background: #ffebee; color: #c62828; border-left: 4px solid #c62828; }
-        .search-url-box { background: #f0f4ff; border: 2px solid #667eea; border-radius: 8px; padding: 14px; margin-bottom: 12px; display: none; }
-        .search-url-box.show { display: block; }
-        .search-url-box h3 { font-size: 13px; font-weight: 600; color: #333; margin-bottom: 6px; }
-        .search-url-box p { font-size: 12px; color: #666; margin-bottom: 10px; }
-        .url-display { display: flex; gap: 6px; flex-direction: column; }
-        @media (min-width: 600px) { .url-display { flex-direction: row; align-items: flex-end; } }
-        #searchUrl { flex: 1; padding: 8px 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 11px; font-family: monospace; background: white; color: #333; }
-        #catalogLink { padding: 8px 16px; font-size: 12px; text-align: center; }
-        .quick-filter-btn { padding: 8px 12px; font-size: 12px; background: #667eea; color: white; border: none; border-radius: 4px; cursor: pointer; margin-right: 6px; margin-bottom: 12px; }
-        .quick-filter-btn:hover { background: #764ba2; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>UNCG Library Search</h1>
-            <p>Find sources for your research</p>
-        </div>
-        
-        <div class="content">
-            <div class="info-box">
-                <strong>How it works:</strong> Set your search criteria and filters, then click "Search Library" to open the UNCG catalog with your optimized search.
-            </div>
-            
-            <div class="tabs">
-                <button class="tab-btn active" onclick="switchTab('search')">Search</button>
-                <button class="tab-btn" onclick="switchTab('history')">History</button>
-            </div>
-            
-            <div id="search" class="tab-content active">
-                <div class="search-fields">
-                    <div class="field-group">
-                        <label for="keywordInput">Keywords:</label>
-                        <input type="text" id="keywordInput" placeholder="e.g., performance anxiety..." />
-                    </div>
-                    <div class="field-group">
-                        <label for="authorInput">Author:</label>
-                        <input type="text" id="authorInput" placeholder="e.g., Smith, J." />
-                    </div>
-                    <button id="searchBtn" onclick="searchLibrary()">Search</button>
-                </div>
-                
-                <div class="status" id="status"></div>
-                
-                <div class="search-url-box" id="searchUrlBox">
-                    <h3>Your Search</h3>
-                    <p>Click to open the UNCG catalog:</p>
-                    <div class="url-display">
-                        <input type="text" id="searchUrl" readonly />
-                        <a href="#" id="catalogLink" target="_blank" onclick="return openCatalog();">Open Catalog</a>
-                    </div>
-                </div>
-                
-                <div class="filters-section">
-                    <h3>Quick Filters</h3>
-                    <div style="margin-bottom: 16px;">
-                        <button class="quick-filter-btn" onclick="setQuickFilter('recent')">Last 5 Years</button>
-                        <button class="quick-filter-btn" onclick="setQuickFilter('decade')">Last 10 Years</button>
-                    </div>
-                    
-                    <h3 style="margin-top: 16px;">Date Range</h3>
-                    <div class="date-filters">
-                        <div class="date-input-group">
-                            <label for="fromYear">From:</label>
-                            <input type="number" id="fromYear" min="1900" max="2100" placeholder="2015" />
-                        </div>
-                        <div class="date-input-group">
-                            <label for="toYear">To:</label>
-                            <input type="number" id="toYear" min="1900" max="2100" placeholder="2024" />
-                        </div>
-                    </div>
-                    
-                    <h3 style="margin-top: 16px;">Sport Psychology Journals</h3>
-                    <button class="toggle-btn" onclick="toggleJournals('sport-psych')">Show/Hide</button>
-                    <div id="sport-psych" class="toggle-content journal-checkboxes">
-                        <label><input type="checkbox" value="JSEP" class="journal-checkbox"> Journal of Sport & Exercise Psychology</label>
-                        <label><input type="checkbox" value="SEPP" class="journal-checkbox"> Sport, Exercise & Performance Psychology</label>
-                        <label><input type="checkbox" value="JASP" class="journal-checkbox"> Journal of Applied Sport Psychology</label>
-                        <label><input type="checkbox" value="TSP" class="journal-checkbox"> The Sport Psychologist</label>
-                        <label><input type="checkbox" value="JSPA" class="journal-checkbox"> Journal of Sport Psychology in Action</label>
-                        <label><input type="checkbox" value="PSE" class="journal-checkbox"> Psychology of Sport & Exercise</label>
-                        <label><input type="checkbox" value="IJSEP" class="journal-checkbox"> International Journal of Sport & Exercise Psychology</label>
-                    </div>
-                    
-                    <h3 style="margin-top: 16px;">Additional Journals</h3>
-                    <button class="toggle-btn" onclick="toggleJournals('additional')">Show/Hide</button>
-                    <div id="additional" class="toggle-content journal-checkboxes">
-                        <label><input type="checkbox" value="JSS" class="journal-checkbox"> Journal of Sports Sciences</label>
-                        <label><input type="checkbox" value="MSSE" class="journal-checkbox"> Medicine & Science in Sports & Exercise</label>
-                        <label><input type="checkbox" value="IJSP" class="journal-checkbox"> International Journal of Sports Psychology</label>
-                        <label><input type="checkbox" value="JSB" class="journal-checkbox"> Journal of Sport Behavior</label>
-                        <label><input type="checkbox" value="RQES" class="journal-checkbox"> Research Quarterly for Exercise and Sport</label>
-                        <label><input type="checkbox" value="JSPR" class="journal-checkbox"> Journal of Sport Psychology Research</label>
-                        <label><input type="checkbox" value="PMS" class="journal-checkbox"> Perceptual and Motor Skills</label>
-                        <label><input type="checkbox" value="FSAL" class="journal-checkbox"> Frontiers in Sports and Active Living</label>
-                        <label><input type="checkbox" value="SM" class="journal-checkbox"> Sports Medicine</label>
-                        <label><input type="checkbox" value="KR" class="journal-checkbox"> Kinesiology Review</label>
-                        <label><input type="checkbox" value="JAT" class="journal-checkbox"> Journal of Athletic Training</label>
-                        <label><input type="checkbox" value="AJSM" class="journal-checkbox"> American Journal of Sports Medicine</label>
-                    </div>
-                </div>
-            </div>
-            
-            <div id="history" class="tab-content">
-                <h3 style="font-size: 14px; font-weight: 600; color: #333; margin-bottom: 12px;">Search History</h3>
-                <div id="searchHistory"></div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        let searchHistory = JSON.parse(localStorage.getItem('searchHistory')) || [];
-        
-        function setQuickFilter(type) {
-            const currentYear = new Date().getFullYear();
-            if (type === 'recent') {
-                document.getElementById('fromYear').value = currentYear - 5;
-                document.getElementById('toYear').value = currentYear;
-            } else if (type === 'decade') {
-                document.getElementById('fromYear').value = currentYear - 10;
-                document.getElementById('toYear').value = currentYear;
-            }
-        }
-        
-        function toggleJournals(id) {
-            const element = document.getElementById(id);
-            element.classList.toggle('open');
-        }
-        
-        function switchTab(tab) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-            document.getElementById(tab).classList.add('active');
-            event.target.classList.add('active');
-        }
-        
-        function updateStatus(message, type) {
-            const status = document.getElementById('status');
-            status.textContent = message;
-            status.className = `status ${type}`;
-        }
-        
-        function openCatalog() {
-            const url = document.getElementById('searchUrl').value;
-            if (url) {
-                window.open(url, '_blank');
-            }
-            return false;
-        }
-        
-        function saveSearch(keywords, author, journals, fromYear, toYear) {
-            const search = {
-                keywords,
-                author,
-                journals,
-                fromYear,
-                toYear,
-                timestamp: new Date().toLocaleString()
-            };
-            searchHistory.unshift(search);
-            if (searchHistory.length > 20) searchHistory.pop();
-            localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
-            updateHistoryDisplay();
-        }
-        
-        function updateHistoryDisplay() {
-            const historyContainer = document.getElementById('searchHistory');
-            if (searchHistory.length === 0) {
-                historyContainer.innerHTML = '<p style="font-size: 12px; color: #999;">No searches yet</p>';
-                return;
-            }
-            
-            historyContainer.innerHTML = searchHistory.map((search, idx) => `
-                <div style="padding: 8px; background: #f9f9f9; border-radius: 4px; margin-bottom: 6px; font-size: 12px;">
-                    <div style="font-weight: 600; color: #333;">${search.keywords}</div>
-                    <div style="color: #999; font-size: 11px;">${search.timestamp}</div>
-                    <button onclick="loadSearch(${idx})" style="margin-top: 4px; padding: 4px 8px; font-size: 11px; background: #667eea; color: white; border: none; border-radius: 4px; cursor: pointer;">Load</button>
-                </div>
-            `).join('');
-        }
-        
-        function loadSearch(idx) {
-            const search = searchHistory[idx];
-            document.getElementById('keywordInput').value = search.keywords;
-            document.getElementById('authorInput').value = search.author || '';
-            document.getElementById('fromYear').value = search.fromYear || '';
-            document.getElementById('toYear').value = search.toYear || '';
-            
-            document.querySelectorAll('.journal-checkbox').forEach(cb => {
-                cb.checked = search.journals && search.journals.includes(cb.value);
-            });
-            
-            switchTab('search');
-        }
-        
-        function searchLibrary() {
-            const keywords = document.getElementById('keywordInput').value.trim();
-            
-            if (!keywords) {
-                updateStatus('Please enter keywords', 'error');
-                return;
-            }
-            
-            const author = document.getElementById('authorInput').value.trim();
-            const journals = Array.from(document.querySelectorAll('.journal-checkbox:checked')).map(cb => cb.value);
-            const fromYear = document.getElementById('fromYear').value;
-            const toYear = document.getElementById('toYear').value;
-            
-            saveSearch(keywords, author, journals, fromYear, toYear);
-            
-            let query = '"' + keywords + '"';
-            if (author) query += ' ' + author;
-            
-            if (journals.length > 0) {
-                const journalMap = {
-                    'JSEP': 'Journal of Sport & Exercise Psychology',
-                    'SEPP': 'Sport, Exercise & Performance Psychology',
-                    'JASP': 'Journal of Applied Sport Psychology',
-                    'TSP': 'The Sport Psychologist',
-                    'JSPA': 'Journal of Sport Psychology in Action',
-                    'PSE': 'Psychology of Sport & Exercise',
-                    'IJSEP': 'International Journal of Sport & Exercise Psychology',
-                    'JSS': 'Journal of Sports Sciences',
-                    'MSSE': 'Medicine & Science in Sports & Exercise',
-                    'IJSP': 'International Journal of Sports Psychology',
-                    'JSB': 'Journal of Sport Behavior',
-                    'RQES': 'Research Quarterly for Exercise and Sport',
-                    'JSPR': 'Journal of Sport Psychology Research',
-                    'PMS': 'Perceptual and Motor Skills',
-                    'FSAL': 'Frontiers in Sports and Active Living',
-                    'SM': 'Sports Medicine',
-                    'KR': 'Kinesiology Review',
-                    'JAT': 'Journal of Athletic Training',
-                    'AJSM': 'American Journal of Sports Medicine'
-                };
-                query += ' (' + journals.map(j => journalMap[j]).join(' OR ') + ')';
-            }
-            
-            if (fromYear || toYear) {
-                query += ' ' + (fromYear || '1900') + '-' + (toYear || '2100');
-            }
-            
-            const url = 'https://uncg.on.worldcat.org/search?queryString=' + encodeURIComponent(query) + '&bookReviews=off&idDetect=true&citeDetect=true&clusterResults=true&groupVariantRecords=false';
-            document.getElementById('searchUrl').value = url;
-            document.getElementById('catalogLink').href = url;
-            document.getElementById('searchUrlBox').classList.add('show');
-            updateStatus('Search URL ready! Click "Open Catalog" to search.', 'success');
-        }
-        
-        document.getElementById('keywordInput').addEventListener('keypress', e => {
-            if (e.key === 'Enter') searchLibrary();
-        });
-        
-        updateHistoryDisplay();
-    </script>
-</body>
-</html>
+        .journal-checkboxes label { display: flex; align-items: center; font-size: 12px; color: #555; cursor: pointer; padding: 6px; }
+        .journal-checkboxes input { margin-right: 8px; cursor: pointer; }
+        .date-filters { display: grid;
