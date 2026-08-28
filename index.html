@@ -96,6 +96,7 @@
                     <button class="quick-filter-btn" onclick="quickFilter(10)">Last 10 Years</button>
                     
                     <h3 style="margin-top: 16px;">Date Range</h3>
+                    <p style="font-size: 11px; color: #999; margin-bottom: 10px; font-style: italic;">Note: Dates are saved in your search history but must be filtered manually in the catalog using UNCG's date filter on the left sidebar.</p>
                     <div class="date-filters">
                         <div class="date-input-group">
                             <label for="fromYear">From:</label>
@@ -182,12 +183,6 @@
             if (jnls.length > 0) q += ' (' + jnls.join(' OR ') + ')';
             
             let url = 'https://uncg.on.worldcat.org/search?queryString=' + encodeURIComponent(q) + '&searchScope=owot';
-            
-            if (from || to) {
-                const startYear = from || '1900';
-                const endYear = to || new Date().getFullYear();
-                url += '&sd=' + startYear + '&ed=' + endYear;
-            }
             
             document.getElementById('searchUrl').value = url;
             document.getElementById('catalogLink').href = url;
