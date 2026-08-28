@@ -61,7 +61,7 @@
         </div>
         
         <div class="content">
-            <div class="info-box">How it works: Enter keywords and select journals. Set date range if you want (you can manually filter by date in the catalog too). Click Search to open UNCG catalog.</div>
+            <div class="info-box">Enter keywords and select journals. Use date range to filter by publication year. Click Search to open UNCG catalog.</div>
             
             <div class="tabs">
                 <button class="tab-btn active" onclick="switchTab('search')">Search</button>
@@ -95,7 +95,7 @@
                     <button class="quick-filter-btn" onclick="quickFilter(5)">Last 5 Years</button>
                     <button class="quick-filter-btn" onclick="quickFilter(10)">Last 10 Years</button>
                     
-                    <h3 style="margin-top: 16px;">Date Range (for reference - set manually in catalog)</h3>
+                    <h3 style="margin-top: 16px;">Date Range</h3>
                     <div class="date-filters">
                         <div class="date-input-group">
                             <label for="fromYear">From:</label>
@@ -181,11 +181,18 @@
             if (auth) q += ' ' + auth;
             if (jnls.length > 0) q += ' (' + jnls.join(' OR ') + ')';
             
-            const url = 'https://uncg.on.worldcat.org/search?queryString=' + encodeURIComponent(q);
+            let url = 'https://uncg.on.worldcat.org/search?queryString=' + encodeURIComponent(q) + '&searchScope=owot';
+            
+            if (from || to) {
+                const startYear = from || '1900';
+                const endYear = to || new Date().getFullYear();
+                url += '&sd=' + startYear + '&ed=' + endYear;
+            }
+            
             document.getElementById('searchUrl').value = url;
             document.getElementById('catalogLink').href = url;
             document.getElementById('searchUrlBox').classList.add('show');
-            document.getElementById('status').innerHTML = '<div class="status success">Ready! Click Open Catalog to search UNCG catalog.</div>';
+            document.getElementById('status').innerHTML = '<div class="status success">Ready! Click Open Catalog.</div>';
             
             hist.unshift({kw: kw, auth: auth, jnls: jnls, from: from, to: to, time: new Date().toLocaleString()});
             if (hist.length > 20) hist.pop();
