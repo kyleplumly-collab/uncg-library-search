@@ -8,10 +8,9 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; }
         .container { flex: 1; display: flex; flex-direction: column; max-width: 1000px; margin: 0 auto; width: 100%; background: white; }
-        @media (min-width: 768px) { .container { border-radius: 12px; margin: 20px auto; box-shadow: 0 20px 60px rgba(0,0,0,0.3); max-height: 90vh; } }
+        @media (min-width: 768px) { .container { border-radius: 12px; margin: 20px auto; box-shadow: 0 20px 60px rgba(0,0,0,0.3); } }
         .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; text-align: center; }
         .header h1 { font-size: 24px; margin-bottom: 4px; }
-        .header p { opacity: 0.9; font-size: 13px; }
         .content { padding: 20px; overflow-y: auto; flex: 1; }
         @media (min-width: 768px) { .content { padding: 30px; } }
         .info-box { background: #f0f4ff; border-left: 4px solid #667eea; padding: 12px; border-radius: 6px; margin-bottom: 16px; font-size: 12px; color: #555; }
@@ -24,10 +23,10 @@
         @media (min-width: 768px) { .search-fields { grid-template-columns: 1fr 1fr auto; align-items: flex-end; } }
         .field-group { display: flex; flex-direction: column; gap: 6px; }
         .field-group label { font-size: 12px; font-weight: 600; color: #333; }
-        .field-group input, .field-group select { padding: 10px 12px; border: 2px solid #e0e0e0; border-radius: 6px; font-size: 13px; font-family: inherit; }
-        .field-group input:focus, .field-group select:focus { outline: none; border-color: #667eea; }
+        .field-group input { padding: 10px 12px; border: 2px solid #e0e0e0; border-radius: 6px; font-size: 13px; }
+        .field-group input:focus { outline: none; border-color: #667eea; }
         button { padding: 10px 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; }
-        button:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4); }
+        button:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(102,126,234,0.4); }
         .filters-section { background: #f8f9fa; border: 1px solid #e0e0e0; border-radius: 8px; padding: 16px; margin-bottom: 16px; }
         .filters-section h3 { font-size: 13px; font-weight: 600; color: #333; margin-bottom: 10px; margin-top: 0; }
         .toggle-btn { background: #667eea; padding: 8px 12px; border-radius: 4px; font-size: 12px; margin-bottom: 12px; }
@@ -39,7 +38,7 @@
         .journal-checkboxes input { margin-right: 8px; cursor: pointer; }
         .date-filters { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .date-input-group { display: flex; flex-direction: column; gap: 6px; }
-        .date-input-group label { font-size: 12px; font-weight: 500; color: #555; }
+        .date-input-group label { font-size: 12px; color: #555; }
         .date-input-group input { padding: 10px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 12px; }
         .status { padding: 10px 12px; border-radius: 6px; margin-bottom: 12px; font-size: 12px; display: none; }
         .status.success { display: block; background: #e8f5e9; color: #388e3c; border-left: 4px solid #388e3c; }
@@ -62,9 +61,7 @@
         </div>
         
         <div class="content">
-            <div class="info-box">
-                <strong>How it works:</strong> Enter keywords, select journals if desired, set date range if needed, then click Search to open UNCG catalog.
-            </div>
+            <div class="info-box">How it works: Enter keywords and select journals. Set date range if you want (you can manually filter by date in the catalog too). Click Search to open UNCG catalog.</div>
             
             <div class="tabs">
                 <button class="tab-btn active" onclick="switchTab('search')">Search</button>
@@ -81,25 +78,24 @@
                         <label for="authorInput">Author:</label>
                         <input type="text" id="authorInput" placeholder="e.g., Smith, J." />
                     </div>
-                    <button onclick="searchLibrary()">Search</button>
+                    <button onclick="doSearch()">Search</button>
                 </div>
                 
                 <div class="status" id="status"></div>
-                
                 <div class="search-url-box" id="searchUrlBox">
                     <h3>Your Search</h3>
                     <div class="url-display">
                         <input type="text" id="searchUrl" readonly />
-                        <a href="#" id="catalogLink" target="_blank" onclick="return openCatalog();">Open Catalog</a>
+                        <a href="#" id="catalogLink" target="_blank" onclick="openCatalog(); return false;">Open Catalog</a>
                     </div>
                 </div>
                 
                 <div class="filters-section">
                     <h3>Quick Filters</h3>
-                    <button class="quick-filter-btn" onclick="setQuickFilter('recent')">Last 5 Years</button>
-                    <button class="quick-filter-btn" onclick="setQuickFilter('decade')">Last 10 Years</button>
+                    <button class="quick-filter-btn" onclick="quickFilter(5)">Last 5 Years</button>
+                    <button class="quick-filter-btn" onclick="quickFilter(10)">Last 10 Years</button>
                     
-                    <h3 style="margin-top: 16px;">Date Range</h3>
+                    <h3 style="margin-top: 16px;">Date Range (for reference - set manually in catalog)</h3>
                     <div class="date-filters">
                         <div class="date-input-group">
                             <label for="fromYear">From:</label>
@@ -112,32 +108,32 @@
                     </div>
                     
                     <h3 style="margin-top: 16px;">Sport Psychology Journals</h3>
-                    <button class="toggle-btn" onclick="toggleJournals('sport-psych')">Show/Hide</button>
+                    <button class="toggle-btn" onclick="toggle('sport-psych')">Show/Hide</button>
                     <div id="sport-psych" class="toggle-content journal-checkboxes">
-                        <label><input type="checkbox" value="JSEP" class="journal-checkbox"> Journal of Sport & Exercise Psychology</label>
-                        <label><input type="checkbox" value="SEPP" class="journal-checkbox"> Sport, Exercise & Performance Psychology</label>
-                        <label><input type="checkbox" value="JASP" class="journal-checkbox"> Journal of Applied Sport Psychology</label>
-                        <label><input type="checkbox" value="TSP" class="journal-checkbox"> The Sport Psychologist</label>
-                        <label><input type="checkbox" value="JSPA" class="journal-checkbox"> Journal of Sport Psychology in Action</label>
-                        <label><input type="checkbox" value="PSE" class="journal-checkbox"> Psychology of Sport & Exercise</label>
-                        <label><input type="checkbox" value="IJSEP" class="journal-checkbox"> International Journal of Sport & Exercise Psychology</label>
+                        <label><input type="checkbox" value="Journal of Sport & Exercise Psychology" class="journal-checkbox"> Journal of Sport & Exercise Psychology</label>
+                        <label><input type="checkbox" value="Sport, Exercise & Performance Psychology" class="journal-checkbox"> Sport, Exercise & Performance Psychology</label>
+                        <label><input type="checkbox" value="Journal of Applied Sport Psychology" class="journal-checkbox"> Journal of Applied Sport Psychology</label>
+                        <label><input type="checkbox" value="The Sport Psychologist" class="journal-checkbox"> The Sport Psychologist</label>
+                        <label><input type="checkbox" value="Journal of Sport Psychology in Action" class="journal-checkbox"> Journal of Sport Psychology in Action</label>
+                        <label><input type="checkbox" value="Psychology of Sport & Exercise" class="journal-checkbox"> Psychology of Sport & Exercise</label>
+                        <label><input type="checkbox" value="International Journal of Sport & Exercise Psychology" class="journal-checkbox"> International Journal of Sport & Exercise Psychology</label>
                     </div>
                     
                     <h3 style="margin-top: 16px;">Additional Journals</h3>
-                    <button class="toggle-btn" onclick="toggleJournals('additional')">Show/Hide</button>
+                    <button class="toggle-btn" onclick="toggle('additional')">Show/Hide</button>
                     <div id="additional" class="toggle-content journal-checkboxes">
-                        <label><input type="checkbox" value="JSS" class="journal-checkbox"> Journal of Sports Sciences</label>
-                        <label><input type="checkbox" value="MSSE" class="journal-checkbox"> Medicine & Science in Sports & Exercise</label>
-                        <label><input type="checkbox" value="IJSP" class="journal-checkbox"> International Journal of Sports Psychology</label>
-                        <label><input type="checkbox" value="JSB" class="journal-checkbox"> Journal of Sport Behavior</label>
-                        <label><input type="checkbox" value="RQES" class="journal-checkbox"> Research Quarterly for Exercise and Sport</label>
-                        <label><input type="checkbox" value="JSPR" class="journal-checkbox"> Journal of Sport Psychology Research</label>
-                        <label><input type="checkbox" value="PMS" class="journal-checkbox"> Perceptual and Motor Skills</label>
-                        <label><input type="checkbox" value="FSAL" class="journal-checkbox"> Frontiers in Sports and Active Living</label>
-                        <label><input type="checkbox" value="SM" class="journal-checkbox"> Sports Medicine</label>
-                        <label><input type="checkbox" value="KR" class="journal-checkbox"> Kinesiology Review</label>
-                        <label><input type="checkbox" value="JAT" class="journal-checkbox"> Journal of Athletic Training</label>
-                        <label><input type="checkbox" value="AJSM" class="journal-checkbox"> American Journal of Sports Medicine</label>
+                        <label><input type="checkbox" value="Journal of Sports Sciences" class="journal-checkbox"> Journal of Sports Sciences</label>
+                        <label><input type="checkbox" value="Medicine & Science in Sports & Exercise" class="journal-checkbox"> Medicine & Science in Sports & Exercise</label>
+                        <label><input type="checkbox" value="International Journal of Sports Psychology" class="journal-checkbox"> International Journal of Sports Psychology</label>
+                        <label><input type="checkbox" value="Journal of Sport Behavior" class="journal-checkbox"> Journal of Sport Behavior</label>
+                        <label><input type="checkbox" value="Research Quarterly for Exercise and Sport" class="journal-checkbox"> Research Quarterly for Exercise and Sport</label>
+                        <label><input type="checkbox" value="Journal of Sport Psychology Research" class="journal-checkbox"> Journal of Sport Psychology Research</label>
+                        <label><input type="checkbox" value="Perceptual and Motor Skills" class="journal-checkbox"> Perceptual and Motor Skills</label>
+                        <label><input type="checkbox" value="Frontiers in Sports and Active Living" class="journal-checkbox"> Frontiers in Sports and Active Living</label>
+                        <label><input type="checkbox" value="Sports Medicine" class="journal-checkbox"> Sports Medicine</label>
+                        <label><input type="checkbox" value="Kinesiology Review" class="journal-checkbox"> Kinesiology Review</label>
+                        <label><input type="checkbox" value="Journal of Athletic Training" class="journal-checkbox"> Journal of Athletic Training</label>
+                        <label><input type="checkbox" value="American Journal of Sports Medicine" class="journal-checkbox"> American Journal of Sports Medicine</label>
                     </div>
                 </div>
             </div>
@@ -150,15 +146,15 @@
     </div>
 
     <script>
-        let searchHistory = JSON.parse(localStorage.getItem('searchHistory')) || [];
+        let hist = JSON.parse(localStorage.getItem('searchHistory')) || [];
         
-        function setQuickFilter(type) {
+        function quickFilter(years) {
             const yr = new Date().getFullYear();
-            document.getElementById('fromYear').value = type === 'recent' ? yr - 5 : yr - 10;
+            document.getElementById('fromYear').value = yr - years;
             document.getElementById('toYear').value = yr;
         }
         
-        function toggleJournals(id) {
+        function toggle(id) {
             document.getElementById(id).classList.toggle('open');
         }
         
@@ -169,21 +165,10 @@
             event.target.classList.add('active');
         }
         
-        function updateStatus(msg, type) {
-            const s = document.getElementById('status');
-            s.textContent = msg;
-            s.className = 'status ' + type;
-        }
-        
-        function openCatalog() {
-            window.open(document.getElementById('searchUrl').value, '_blank');
-            return false;
-        }
-        
-        function searchLibrary() {
+        function doSearch() {
             const kw = document.getElementById('keywordInput').value.trim();
             if (!kw) {
-                updateStatus('Enter keywords', 'error');
+                document.getElementById('status').innerHTML = '<div class="status error">Enter keywords</div>';
                 return;
             }
             
@@ -194,80 +179,50 @@
             
             let q = '"' + kw + '"';
             if (auth) q += ' ' + auth;
-            
-            if (jnls.length > 0) {
-                const jMap = {
-                    'JSEP': 'Journal of Sport & Exercise Psychology',
-                    'SEPP': 'Sport, Exercise & Performance Psychology',
-                    'JASP': 'Journal of Applied Sport Psychology',
-                    'TSP': 'The Sport Psychologist',
-                    'JSPA': 'Journal of Sport Psychology in Action',
-                    'PSE': 'Psychology of Sport & Exercise',
-                    'IJSEP': 'International Journal of Sport & Exercise Psychology',
-                    'JSS': 'Journal of Sports Sciences',
-                    'MSSE': 'Medicine & Science in Sports & Exercise',
-                    'IJSP': 'International Journal of Sports Psychology',
-                    'JSB': 'Journal of Sport Behavior',
-                    'RQES': 'Research Quarterly for Exercise and Sport',
-                    'JSPR': 'Journal of Sport Psychology Research',
-                    'PMS': 'Perceptual and Motor Skills',
-                    'FSAL': 'Frontiers in Sports and Active Living',
-                    'SM': 'Sports Medicine',
-                    'KR': 'Kinesiology Review',
-                    'JAT': 'Journal of Athletic Training',
-                    'AJSM': 'American Journal of Sports Medicine'
-                };
-                q += ' (' + jnls.map(j => jMap[j]).join(' OR ') + ')';
-            }
-            
-            if (from || to) {
-                if (from && to) {
-                    q += ' yr:' + from + '-' + to;
-                } else if (from) {
-                    q += ' yr:>=' + from;
-                } else if (to) {
-                    q += ' yr:<=' + to;
-                }
-            }
+            if (jnls.length > 0) q += ' (' + jnls.join(' OR ') + ')';
             
             const url = 'https://uncg.on.worldcat.org/search?queryString=' + encodeURIComponent(q);
             document.getElementById('searchUrl').value = url;
             document.getElementById('catalogLink').href = url;
             document.getElementById('searchUrlBox').classList.add('show');
-            updateStatus('Ready! Click Open Catalog.', 'success');
+            document.getElementById('status').innerHTML = '<div class="status success">Ready! Click Open Catalog to search UNCG catalog.</div>';
             
-            searchHistory.unshift({keywords: kw, author: auth, journals: jnls, fromYear: from, toYear: to, timestamp: new Date().toLocaleString()});
-            if (searchHistory.length > 20) searchHistory.pop();
-            localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
-            updateHistory();
+            hist.unshift({kw: kw, auth: auth, jnls: jnls, from: from, to: to, time: new Date().toLocaleString()});
+            if (hist.length > 20) hist.pop();
+            localStorage.setItem('searchHistory', JSON.stringify(hist));
+            showHist();
         }
         
-        function updateHistory() {
+        function openCatalog() {
+            window.open(document.getElementById('searchUrl').value, '_blank');
+        }
+        
+        function showHist() {
             const h = document.getElementById('searchHistory');
-            h.innerHTML = searchHistory.length === 0 ? '<p style="font-size:12px;color:#999;">No searches yet</p>' : searchHistory.map((s, i) => `
+            h.innerHTML = hist.length === 0 ? '<p style="font-size:12px;color:#999;">No searches yet</p>' : hist.map((s, i) => `
                 <div style="padding:8px;background:#f9f9f9;border-radius:4px;margin-bottom:6px;font-size:12px;">
-                    <div style="font-weight:600;color:#333;">${s.keywords}</div>
-                    <div style="color:#999;font-size:11px;">${s.timestamp}</div>
-                    <button onclick="loadSearch(${i})" style="margin-top:4px;padding:4px 8px;font-size:11px;">Load</button>
+                    <div style="font-weight:600;color:#333;">${s.kw}</div>
+                    <div style="color:#999;font-size:11px;">${s.time}</div>
+                    <button onclick="loadHist(${i})" style="margin-top:4px;padding:4px 8px;font-size:11px;background:#667eea;color:white;border:none;border-radius:4px;cursor:pointer;">Load</button>
                 </div>
             `).join('');
         }
         
-        function loadSearch(i) {
-            const s = searchHistory[i];
-            document.getElementById('keywordInput').value = s.keywords;
-            document.getElementById('authorInput').value = s.author || '';
-            document.getElementById('fromYear').value = s.fromYear || '';
-            document.getElementById('toYear').value = s.toYear || '';
-            document.querySelectorAll('.journal-checkbox').forEach(c => c.checked = s.journals && s.journals.includes(c.value));
+        function loadHist(i) {
+            const s = hist[i];
+            document.getElementById('keywordInput').value = s.kw;
+            document.getElementById('authorInput').value = s.auth || '';
+            document.getElementById('fromYear').value = s.from || '';
+            document.getElementById('toYear').value = s.to || '';
+            document.querySelectorAll('.journal-checkbox').forEach(c => c.checked = s.jnls && s.jnls.includes(c.value));
             switchTab('search');
         }
         
         document.getElementById('keywordInput').addEventListener('keypress', e => {
-            if (e.key === 'Enter') searchLibrary();
+            if (e.key === 'Enter') doSearch();
         });
         
-        updateHistory();
+        showHist();
     </script>
 </body>
 </html>
